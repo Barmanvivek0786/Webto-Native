@@ -1,0 +1,31 @@
+name: Extract Zip File
+on:
+  workflow_dispatch:
+
+jobs:
+  extract_job:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download Zip from Release
+        run: |
+          # Is line mein humne aapke exact file aur repo names use kiye hain
+          curl -L -o Web-To-Native.zip https://github.com/${{ github.repository }}/releases/download/v1.0/Web-To-Native.zip
+
+      - name: Unzip Files
+        run: |
+          # Zip ko extract karke terminal se delete karna
+          unzip Web-To-Native.zip -d ./
+          rm Web-To-Native.zip
+
+      - name: Save to GitHub
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add .
+          git commit -m "Extracted files from Web-To-Native.zip into Webto-Native repo"
+          git push
